@@ -1,10 +1,10 @@
 use sysinfo::Disk;
 
-use crate::repository::struct_DiskInfo::StrDiskInfo;
+use crate::models::model_disk_info::StrDiskInfo;
 
-pub struct Srv_sysinfo;
+pub struct SrvSysinfo;
 
-impl Srv_sysinfo {
+impl SrvSysinfo {
     pub fn _get_disk_info(el: &Disk) -> StrDiskInfo {
         let d_total: f64 = el.total_space() as f64;
         let d_avail: f64 = el.available_space() as f64;
