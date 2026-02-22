@@ -1,24 +1,12 @@
+mod constant;
 mod controllers;
 mod models;
 mod services;
 
-use axum::{Router, routing::get};
-
-use crate::controllers::cont_sysinfo::ContSysinfo;
-
-fn create_app() -> Router {
-    Router::new().route("/get_sysinfo", get(ContSysinfo::get_sysinfo))
-}
+use crate::services::service_web::SrvWeb;
 
 #[tokio::main]
 async fn main() {
-    let app = create_app();
-
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
-        .await
-        .expect("msg");
-
-    println!("{}", "asdasd");
-
-    axum::serve(listener, app).await.expect("Failed to start");
+    let x = SrvWeb::init().await;
+    println!(" ----- WEBSERVER RUNS {:?} ----- ", x);
 }

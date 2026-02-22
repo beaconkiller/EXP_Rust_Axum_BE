@@ -19,7 +19,7 @@ impl ContSysinfo {
         let mut new_arr: Vec<StrDiskInfo> = Vec::new();
 
         for el in disks.list() {
-            let x: StrDiskInfo = SrvSysinfo::_get_disk_info(el);
+            let x: StrDiskInfo = SrvSysinfo::get_disk_info(el);
             new_arr.push(x);
         }
 

@@ -5,7 +5,7 @@ use crate::models::model_disk_info::StrDiskInfo;
 pub struct SrvSysinfo;
 
 impl SrvSysinfo {
-    pub fn _get_disk_info(el: &Disk) -> StrDiskInfo {
+    pub fn get_disk_info(el: &Disk) -> StrDiskInfo {
         let d_total: f64 = el.total_space() as f64;
         let d_avail: f64 = el.available_space() as f64;
         let d_usage: f64 = d_total - d_avail;

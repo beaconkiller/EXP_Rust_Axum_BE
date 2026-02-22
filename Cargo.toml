@@ -1,5 +1,5 @@
 [package]
-name = "EXP_Rust_0"
+name = "EXP_Rust_Monitoring_Client"
 version = "0.1.0"
 edition = "2024"
 
@@ -12,3 +12,4 @@ sysinfo = "0.38.2"
 tokio = {version = "1.49.0", features=["full"]}
 rust_decimal = {version = "1.40.0", features = ["macros"]}
 serde = {version = "1.0.228", features = ["derive"]}
+dotenvy = "0.15.7"

@@ -3,10 +3,11 @@
 version = 4
 
 [[package]]
-name = "EXP_Rust_0"
+name = "EXP_Rust_Monitoring_Client"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "dotenvy",
  "ferris-says",
  "pad",
  "rust_decimal",
@@ -192,6 +193,12 @@ name = "cfg_aliases"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+
+[[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
 name = "equivalent"
