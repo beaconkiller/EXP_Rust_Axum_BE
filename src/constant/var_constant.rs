@@ -20,9 +20,13 @@ impl VarConstant {
 
         let addr: String = env::var("ADDR").unwrap_or("err".to_string());
 
-        StrConfig {
+        let config = StrConfig {
             port: port,
             addr: addr,
-        }
+        };
+
+        println!("{:?}", config);
+
+        config
     }
 }

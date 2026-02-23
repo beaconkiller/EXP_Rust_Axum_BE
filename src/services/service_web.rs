@@ -38,6 +38,8 @@ impl SrvWeb {
             }
         };
 
+        println!("{:?}", listener);
+
         axum::serve(listener, app).await.expect("Failed")
     }
 }
