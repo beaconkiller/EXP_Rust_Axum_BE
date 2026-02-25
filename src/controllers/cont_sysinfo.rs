@@ -1,14 +1,15 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use axum::Json;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sysinfo::{Disks, Networks, System};
 
+use crate::GLOBAL_SYS;
 use crate::constant::var_constant::{StrConfig, VarConstant};
-use crate::services::service_sysinfo::SrvSysinfo;
-
 use crate::models::{model_api_response::ApiResponse, model_disk_info::StrDiskInfo};
+use crate::services::service_sysinfo::SrvSysinfo;
 
 #[derive(Serialize)]
 pub struct StrClientInfo {
@@ -22,7 +23,7 @@ pub struct StrClientData {
     pub cpu_info: Vec<StrCpuInfo>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct StrCpuInfo {
     pub i: i16,
     pub cpu_name: String,
@@ -36,9 +37,8 @@ pub struct ContSysinfo;
 impl ContSysinfo {
     pub async fn get_sysinfo() -> Json<ApiResponse<StrClientInfo>> {
         // pub async fn get_sysinfo() -> Json<ApiResponse<Vec<StrDiskInfo>>> {
-        let mut sys: System = System::new_all();
-
-        let mut data: HashMap<String, Value> = HashMap::new();
+        let mut srv_sysinfo: Arc<SrvSysinfo> = GLOBAL_SYS.lock().unwrap().clone().unwrap();
+        let mut sys = srv_sysinfo.instance_sys.lock().await;
 
         sys.refresh_all();
 
