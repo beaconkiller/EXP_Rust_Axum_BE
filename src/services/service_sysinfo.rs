@@ -39,7 +39,7 @@ impl SrvSysinfo {
                 {
                     let mut sys = self.instance_sys.lock().await;
                     sys.refresh_all();
-                    println!("{:?}", sys.cpus())
+                    // println!("{:?}", sys.cpus())
                 }
 
                 tokio::time::sleep(Duration::from_secs(2)).await

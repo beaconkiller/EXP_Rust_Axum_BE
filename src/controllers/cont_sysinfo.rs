@@ -11,13 +11,13 @@ use crate::constant::var_constant::{StrConfig, VarConstant};
 use crate::models::{model_api_response::ApiResponse, model_disk_info::StrDiskInfo};
 use crate::services::service_sysinfo::SrvSysinfo;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug)]
 pub struct StrClientInfo {
     pub addr: String,
     pub data: StrClientData,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct StrClientData {
     pub disk_info: Vec<StrDiskInfo>,
     pub cpu_info: Vec<StrCpuInfo>,
@@ -31,7 +31,7 @@ pub struct StrCpuInfo {
     pub cpu_usage: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ContSysinfo;
 
 impl ContSysinfo {
@@ -81,6 +81,11 @@ impl ContSysinfo {
             addr: format!("{addr}:{port}"),
             data: client_data,
         };
+
+        println!();
+        println!("{:?}", " ---------- client_data ---------- ");
+        println!("{:?}", client_info.clone());
+        println!();
 
         Json(ApiResponse {
             status: 200,
