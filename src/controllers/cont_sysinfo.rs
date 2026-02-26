@@ -21,6 +21,7 @@ pub struct StrClientInfo {
 pub struct StrClientData {
     pub disk_info: Vec<StrDiskInfo>,
     pub cpu_info: Vec<StrCpuInfo>,
+    pub mem_info: Option<StrRamInfo>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -31,11 +32,19 @@ pub struct StrCpuInfo {
     pub cpu_usage: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StrRamInfo {
+    pub memory_total: u64,
+    pub memory_used: u64,
+    pub percent: String,
+}
+
 #[derive(Serialize, Debug)]
 pub struct ContSysinfo;
 
 impl ContSysinfo {
     pub async fn get_sysinfo() -> Json<ApiResponse<StrClientInfo>> {
+        println!("{:?}", "Got hit");
         // pub async fn get_sysinfo() -> Json<ApiResponse<Vec<StrDiskInfo>>> {
         let mut srv_sysinfo: Arc<SrvSysinfo> = GLOBAL_SYS.lock().unwrap().clone().unwrap();
         let mut sys = srv_sysinfo.instance_sys.lock().await;
@@ -50,6 +59,15 @@ impl ContSysinfo {
 
         let cpu_info = sys.cpus();
         let cpu_data: Vec<StrCpuInfo> = SrvSysinfo::get_cpu_info(cpu_info);
+
+        // ============================
+        // ============ RAM ===========
+        // ============================
+
+        let ram_used = sys.used_memory();
+        let ram_total = sys.total_memory();
+        let ram_data: StrRamInfo = SrvSysinfo::get_ram_info(ram_used, ram_total);
+        // println!("{:?}", ram_data);
 
         // ============================
         // =========== DISKS ==========
@@ -71,6 +89,7 @@ impl ContSysinfo {
         let client_data = StrClientData {
             cpu_info: cpu_data,
             disk_info: new_arr,
+            mem_info: Some(ram_data),
         };
 
         let config: StrConfig = VarConstant::get_config();
@@ -82,10 +101,10 @@ impl ContSysinfo {
             data: client_data,
         };
 
-        println!();
-        println!("{:?}", " ---------- client_data ---------- ");
-        println!("{:?}", client_info.clone());
-        println!();
+        // println!();
+        // println!("{:?}", " ---------- client_data ---------- ");
+        // println!("{:#?}", client_info.clone());
+        // println!();
 
         Json(ApiResponse {
             status: 200,

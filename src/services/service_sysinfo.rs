@@ -5,7 +5,10 @@ use serde_json::Value;
 use sysinfo::{Cpu, Disk, Networks};
 use tokio::sync::Mutex;
 
-use crate::{controllers::cont_sysinfo::StrCpuInfo, models::model_disk_info::StrDiskInfo};
+use crate::{
+    controllers::cont_sysinfo::{StrCpuInfo, StrRamInfo},
+    models::model_disk_info::StrDiskInfo,
+};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StrClientInfo {}
@@ -35,13 +38,11 @@ impl SrvSysinfo {
             println!("{:?}", "Loop started.");
             println!("{:?}", "----------------------------");
             loop {
-                println!("{}", "asdasd");
                 {
                     let mut sys = self.instance_sys.lock().await;
                     sys.refresh_all();
                     // println!("{:?}", sys.cpus())
                 }
-
                 tokio::time::sleep(Duration::from_secs(2)).await
             }
         });
@@ -51,20 +52,15 @@ impl SrvSysinfo {
         let d_total: f64 = el.total_space() as f64;
         let d_avail: f64 = el.available_space() as f64;
         let d_usage: f64 = d_total - d_avail;
-
         let d_usage_percent: f64 = format!("{:.2}", ((d_usage / d_total) * 100.0))
             .parse()
             .unwrap();
 
         let d_mounted_on: String = el.mount_point().to_string_lossy().to_string();
-
-        // println!("{:?}", disk_info);
-
         let disk_info: StrDiskInfo = StrDiskInfo {
             usage: d_usage_percent.to_string(),
             mounted_on: d_mounted_on,
         };
-
         disk_info
     }
 
@@ -79,7 +75,6 @@ impl SrvSysinfo {
 
     pub fn get_cpu_info(data: &[Cpu]) -> Vec<StrCpuInfo> {
         let mut arr = Vec::new();
-
         let mut i = 1;
         for el in data {
             arr.push(StrCpuInfo {
@@ -90,7 +85,15 @@ impl SrvSysinfo {
             });
             i += 1;
         }
-
         arr
+    }
+
+    pub fn get_ram_info(ram_used: u64, ram_total: u64) -> StrRamInfo {
+        let percent = format!("{:.2}", (ram_used as f64 / ram_total as f64) * 100 as f64);
+        StrRamInfo {
+            memory_total: ram_total,
+            memory_used: ram_used,
+            percent: percent.to_string(),
+        }
     }
 }
