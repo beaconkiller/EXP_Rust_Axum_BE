@@ -8,11 +8,22 @@ use std::sync::Arc;
 
 use crate::{
     global::Global::GLOBAL_SYS,
-    services::{service_sysinfo::SrvSysinfo, service_web::SrvWeb},
+    services::{service_pm2::SrvPM2, service_sysinfo::SrvSysinfo, service_web::SrvWeb},
 };
 
 #[tokio::main]
 async fn main() {
+    // =====================================
+    // =============== DEBUG ===============
+    // =====================================
+
+    let x = SrvPM2;
+    x.init().await;
+
+    // =====================================
+    // =====================================
+    // =====================================
+
     let srv_sys = Arc::new(SrvSysinfo::new());
 
     srv_sys.clone().init_loop();
@@ -21,6 +32,5 @@ async fn main() {
         *clone_this = Some(srv_sys);
     }
 
-    let x = SrvWeb::init().await;
-    println!(" ----- WEBSERVER RUNS {:?} ----- ", x);
+    SrvWeb::init().await;
 }
