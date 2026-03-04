@@ -23,7 +23,6 @@ pub struct SrvSysinfo {
 impl SrvSysinfo {
     pub fn new() -> Self {
         let mut sys = sysinfo::System::new();
-
         Self {
             disk_info: Mutex::new(None),
             cpu_info: Mutex::new(None),
@@ -41,7 +40,7 @@ impl SrvSysinfo {
                 {
                     let mut sys = self.instance_sys.lock().await;
                     sys.refresh_all();
-                    // println!("{:?}", sys.cpus())
+                    // println!("{:?}", sys.cpus());
                 }
                 tokio::time::sleep(Duration::from_secs(2)).await
             }

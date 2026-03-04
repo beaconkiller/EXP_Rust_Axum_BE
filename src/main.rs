@@ -7,7 +7,7 @@ mod services;
 use std::sync::Arc;
 
 use crate::{
-    global::Global::GLOBAL_SYS,
+    global::Global::{GL_SRV_PM2, GLOBAL_SYS},
     services::{service_pm2::SrvPM2, service_sysinfo::SrvSysinfo, service_web::SrvWeb},
 };
 
@@ -17,8 +17,11 @@ async fn main() {
     // =============== DEBUG ===============
     // =====================================
 
-    let x = SrvPM2;
-    x.init().await;
+    let SrvPm2 = &GL_SRV_PM2;
+    SrvPm2.clone().init().await;
+
+    // let x = SrvPM2;
+    // x.init().await;
 
     // =====================================
     // =====================================

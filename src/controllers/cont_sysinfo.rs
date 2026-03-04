@@ -8,7 +8,9 @@ use sysinfo::{Disks, Networks, System};
 
 use crate::GLOBAL_SYS;
 use crate::constant::var_constant::{StrConfig, VarConstant};
+use crate::global::Global::GL_SRV_PM2;
 use crate::models::{model_api_response::ApiResponse, model_disk_info::StrDiskInfo};
+use crate::services::service_pm2::{StrPM2Output, StrPM2Send};
 use crate::services::service_sysinfo::SrvSysinfo;
 
 #[derive(Serialize, Clone, Debug)]
@@ -22,6 +24,7 @@ pub struct StrClientData {
     pub disk_info: Vec<StrDiskInfo>,
     pub cpu_info: Vec<StrCpuInfo>,
     pub mem_info: Option<StrRamInfo>,
+    pub pm2_info:Vec<StrPM2Send>
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -86,10 +89,17 @@ impl ContSysinfo {
         let networks: Networks = Networks::new_with_refreshed_list();
         // SrvSysinfo::get_netw_info(networks);
 
+        // ================================
+        // =========== PM2 DATA ===========
+        // ================================
+
+        let pm2_data = GL_SRV_PM2.get_mapped_pm2_output().await;
+
         let client_data = StrClientData {
             cpu_info: cpu_data,
             disk_info: new_arr,
             mem_info: Some(ram_data),
+            pm2_info: pm2_data
         };
 
         let config: StrConfig = VarConstant::get_config();
