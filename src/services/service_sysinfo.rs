@@ -33,9 +33,9 @@ impl SrvSysinfo {
     pub fn init_loop(self: Arc<Self>) {
         // let sys = sysinfo.
         tokio::spawn(async move {
-            println!("{:?}", "----------------------------");
-            println!("{:?}", "Loop started.");
-            println!("{:?}", "----------------------------");
+            println!("{:?}", "----------------------------------------");
+            println!("{:?}", "------- SrvSysInfo Loop started. -------");
+            println!("{:?}", "----------------------------------------");
             loop {
                 {
                     let mut sys = self.instance_sys.lock().await;

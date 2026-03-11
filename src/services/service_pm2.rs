@@ -30,6 +30,10 @@ pub struct SrvPM2 {
 impl SrvPM2 {
     pub async fn init(&self) {
         tokio::spawn(async move {
+            println!("{:?}", "----------------------------------------");
+            println!("{:?}", "--------- SrvPM2 Loop started. ---------");
+            println!("{:?}", "----------------------------------------");
+
             loop {
                 let new_data = Self::get_pm2_jlist().await;
                 let SrvPm2 = &GL_SRV_PM2;
@@ -57,10 +61,10 @@ impl SrvPM2 {
             .expect("failed to execute pm2");
 
         let arr_pm2_raw: Value = serde_json::from_slice(&output.stdout).unwrap();
-        println!("{:#?}", arr_pm2_raw);
-        println!();
-        println!("{:#?}", "--------------------------");
-        println!();
+        // println!("{:#?}", arr_pm2_raw);
+        // println!();
+        // println!("{:#?}", "--------------------------");
+        // println!();
 
         let mut tmp_arr: Vec<StrPM2Output> = vec![];
         if let Some(processes) = arr_pm2_raw.as_array() {

@@ -24,7 +24,7 @@ pub struct StrClientData {
     pub disk_info: Vec<StrDiskInfo>,
     pub cpu_info: Vec<StrCpuInfo>,
     pub mem_info: Option<StrRamInfo>,
-    pub pm2_info:Vec<StrPM2Send>
+    pub pm2_info: Vec<StrPM2Send>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -47,7 +47,7 @@ pub struct ContSysinfo;
 
 impl ContSysinfo {
     pub async fn get_sysinfo() -> Json<ApiResponse<StrClientInfo>> {
-        println!("{:?}", "Got hit");
+        // println!("{:?}", "Got hit");
         // pub async fn get_sysinfo() -> Json<ApiResponse<Vec<StrDiskInfo>>> {
         let mut srv_sysinfo: Arc<SrvSysinfo> = GLOBAL_SYS.lock().unwrap().clone().unwrap();
         let mut sys = srv_sysinfo.instance_sys.lock().await;
@@ -99,7 +99,7 @@ impl ContSysinfo {
             cpu_info: cpu_data,
             disk_info: new_arr,
             mem_info: Some(ram_data),
-            pm2_info: pm2_data
+            pm2_info: pm2_data,
         };
 
         let config: StrConfig = VarConstant::get_config();

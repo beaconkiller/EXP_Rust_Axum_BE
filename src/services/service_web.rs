@@ -38,7 +38,10 @@ impl SrvWeb {
             }
         };
 
+        println!("{:?}", "----------------------------------------");
+        println!("{:?}", "----------- SrvWeb starting. -----------");
         println!("{:?}", listener);
+        println!("{:?}", "----------------------------------------");
 
         axum::serve(listener, app).await.expect("Failed")
     }
