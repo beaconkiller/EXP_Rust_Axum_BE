@@ -27,8 +27,15 @@ impl SrvPM2 {
     }
 
     pub async fn get_pm2_jlist() -> Vec<StrPM2Output> {
+        #[cfg(target_os = "windows")]
         let output = Command::new("cmd")
             .args(["/C", "pm2", "jlist"])
+            .output()
+            .expect("failed to execute pm2");
+
+        #[cfg(not(target_os = "windows"))]
+        let output = Command::new("pm2")
+            .args(["jlist"])
             .output()
             .expect("failed to execute pm2");
 
