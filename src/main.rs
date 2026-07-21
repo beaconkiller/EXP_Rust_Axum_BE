@@ -7,8 +7,10 @@ mod services;
 use std::sync::Arc;
 
 use crate::{
-    global::Global::{GL_SRV_PM2, GLOBAL_SYS},
-    services::{service_pm2::SrvPM2, service_sysinfo::SrvSysinfo, service_web::SrvWeb},
+    global::Global::{GL_SRV_PM2, GL_WS, GLOBAL_SYS},
+    services::{
+        service_pm2::SrvPM2, service_sysinfo::SrvSysinfo, service_web::SrvWeb, service_ws::SrvWs,
+    },
 };
 
 #[tokio::main]
@@ -32,8 +34,8 @@ async fn main() {
     // ============= STARTING PM2 SERVICE ==============
     // =================================================
 
-    let SrvPm2 = &GL_SRV_PM2;
-    SrvPm2.init().await;
+    // let SrvPm2 = &GL_SRV_PM2;
+    // SrvPm2.init().await;
 
     // =================================================
     // ============ STARTING SYSTEM SERVICE ============
@@ -46,6 +48,12 @@ async fn main() {
         let mut clone_this = GLOBAL_SYS.lock().unwrap();
         *clone_this = Some(srv_sys);
     }
+
+    // =================================================
+    // ============= STARTING WS SERVICE ===============
+    // =================================================
+
+    GL_WS.clone().init().await;
 
     SrvWeb::init().await;
 }

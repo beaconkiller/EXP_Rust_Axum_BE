@@ -2,13 +2,21 @@ use std::{alloc::System, collections::HashMap, sync::Arc, time::Duration};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use sysinfo::{Cpu, Disk, Networks};
+use sysinfo::{Cpu, Disk, Disks, Networks};
 use tokio::sync::Mutex;
 
 use crate::{
-    controllers::cont_sysinfo::{StrCpuInfo, StrRamInfo},
+    controllers::cont_sysinfo::{ContSysinfo, StrCpuInfo, StrRamInfo},
+    global::Global::GLOBAL_SYS,
     models::model_disk_info::StrDiskInfo,
 };
+
+#[derive(Serialize, Debug)]
+pub struct StrClientData {
+    pub disk_info: Vec<StrDiskInfo>,
+    pub cpu_info: Vec<StrCpuInfo>,
+    pub mem_info: Option<StrRamInfo>,
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct StrClientInfo {}
@@ -40,9 +48,16 @@ impl SrvSysinfo {
                 {
                     let mut sys = self.instance_sys.lock().await;
                     sys.refresh_all();
+
+                    // if let Some(sys) = GLOBAL_SYS.lock().unwrap().as_ref() {
+                    //     println!("{:?}", sys);
+                    // }
+
+                    // println!("{:?}", sys.cpus());
+
                     // println!("{:?}", sys.cpus());
                 }
-                tokio::time::sleep(Duration::from_secs(2)).await
+                tokio::time::sleep(Duration::from_secs(1)).await
             }
         });
     }
@@ -94,5 +109,62 @@ impl SrvSysinfo {
             memory_used: ram_used,
             percent: percent.to_string(),
         }
+    }
+
+    pub async fn get_all_info() -> StrClientData {
+        // let guard = GLOBAL_SYS.lock().unwrap();
+        let srv_sysinfo: Arc<SrvSysinfo> = GLOBAL_SYS.lock().unwrap().clone().unwrap();
+        // println!("{:?}", guard);
+        let mut sys = srv_sysinfo.instance_sys.lock().await;
+
+        sys.refresh_all();
+
+        let disks = Disks::new_with_refreshed_list();
+
+        // ============================
+        // ============ CPU ===========
+        // ============================
+
+        let cpu_info = sys.cpus();
+        let cpu_data: Vec<StrCpuInfo> = SrvSysinfo::get_cpu_info(cpu_info);
+
+        // ============================
+        // ============ RAM ===========
+        // ============================
+
+        let ram_used = sys.used_memory();
+        let ram_total = sys.total_memory();
+        let ram_data: StrRamInfo = SrvSysinfo::get_ram_info(ram_used, ram_total);
+
+        // ============================
+        // =========== DISKS ==========
+        // ============================
+
+        let mut new_arr: Vec<StrDiskInfo> = Vec::new();
+        for el in disks.list() {
+            let x: StrDiskInfo = SrvSysinfo::get_disk_info(el);
+            new_arr.push(x);
+        }
+
+        // ================================
+        // ============ NETWORK ===========
+        // ================================
+
+        let networks: Networks = Networks::new_with_refreshed_list();
+        // SrvSysinfo::get_netw_info(networks);
+
+        // ================================
+        // =========== PM2 DATA ===========
+        // ================================
+
+        // let pm2_data = GL_SRV_PM2.get_mapped_pm2_output().await;
+
+        let client_data = StrClientData {
+            cpu_info: cpu_data,
+            disk_info: new_arr,
+            mem_info: Some(ram_data),
+        };
+
+        client_data
     }
 }

@@ -1,9 +1,10 @@
 use crate::{
     constant::var_constant::{StrConfig, VarConstant},
-    services::service_routes,
+    global::Global::GL_WS,
+    services::{service_routes, service_ws::SrvWs},
 };
 
-use axum::Router;
+use axum::{Router, routing::get};
 use tokio;
 
 pub struct SrvWeb;
