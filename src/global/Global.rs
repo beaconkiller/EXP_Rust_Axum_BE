@@ -11,9 +11,10 @@ pub static GLOBAL_SYS: LazyLock<Mutex<Option<Arc<SrvSysinfo>>>> =
 
 pub static GL_WS: LazyLock<Arc<SrvWs>> = LazyLock::new(|| {
     Arc::new(SrvWs {
-        arr_clients: tokio::sync::Mutex::new(vec![].into()),
         status: AtomicI32::new(0),
+        connect_address: "ws://127.0.0.1:2121/ws".to_string(),
         tx: tokio::sync::Mutex::new(None),
+        sender: tokio::sync::Mutex::new(None),
     })
 });
 

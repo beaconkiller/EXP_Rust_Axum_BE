@@ -53,7 +53,7 @@ async fn main() {
     // ============= STARTING WS SERVICE ===============
     // =================================================
 
-    GL_WS.clone().init().await;
+    GL_WS.clone().connect_ws().await;
 
     SrvWeb::init().await;
 }
